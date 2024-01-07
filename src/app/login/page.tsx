@@ -4,6 +4,7 @@ import CenterContentCard from "@/components/CenterContentCard";
 import HorizontalLine from "@/components/HorizontalLine";
 import InputWithLabel from "@/components/InputWithLabel";
 import MainButton from "@/components/MainButton";
+import validateEmail from "@/helpers/emailValidator";
 import supabaseClient from "@/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,10 @@ const LoginPage = () => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const router = useRouter();
+
+  const validEmail = validateEmail(email);
+  const validPassword = password.length >= 6;
+  const valid = validEmail && validPassword;
 
   const login = async () => {
     setIsProcessing(true);
@@ -47,12 +52,16 @@ const LoginPage = () => {
         handler={setEmail}
         labelText="Email"
         hintText="enter your email"
+        error={!validEmail}
+        disabled={isProcessing}
       />
       <InputWithLabel
         handler={setPassword}
         labelText="Password"
         hintText="at least 6 characters"
         obsure={true}
+        error={!validPassword}
+        disabled={isProcessing}
       />
       <br></br>
       <MainButton handler={login} loading={isProcessing}>
