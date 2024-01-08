@@ -38,7 +38,10 @@ export default function Home() {
         </p>
         <div className="p-3 rounded-xl shadow-lg bg-white w-full max-w-4xl">
           <video className="w-full" controls>
-            <source src="/intro.mp4" type="video/mp4"></source>
+            <source
+              src="https://lislkdrqthbcxlhuqbzw.supabase.co/storage/v1/object/public/image/804ebcf1-47db-4e0e-bfc9-a47aef6395ed.mp4?t=2024-01-08T18%3A33%3A08.037Z"
+              type="video/mp4"
+            ></source>
           </video>
         </div>
       </div>
