@@ -75,18 +75,15 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!user) return;
-    console.log(user.id);
     supabaseClient
       .from("accounts")
       .select()
       .eq("id", user.id)
       .then((response) => {
-        console.log(response);
         if (!response.data) {
           setErrorMessage("Cannot get your profile information");
           return;
         }
-        console.log(response.data);
         const thisUserInfo: UserInfo = {
           id: response.data[0].id,
           firstName: response.data[0].first_name,
