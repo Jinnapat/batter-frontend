@@ -4,6 +4,7 @@ import CenterContentCard from "@/components/CenterContentCard";
 import HorizontalLine from "@/components/HorizontalLine";
 import InputWithLabel from "@/components/InputWithLabel";
 import MainButton from "@/components/MainButton";
+import SessionChecker from "@/components/SessionChecker";
 import validateEmail from "@/helpers/emailValidator";
 import supabaseClient from "@/supabase/client";
 import Link from "next/link";
@@ -54,76 +55,78 @@ const RegisterPage = () => {
   };
 
   return (
-    <CenterContentCard>
-      <div>
-        <h1 className="font-bold text-4xl text-center">REGISTER</h1>
-        <p className="text-center text-sm">
-          Lets join Batter and create a greener future together!
-        </p>
-      </div>
-      <HorizontalLine />
-      <InputWithLabel
-        handler={setFirstName}
-        labelText="First Name"
-        hintText="enter your first name"
-        error={!validFirstName}
-        disabled={locked}
-      />
-      <InputWithLabel
-        handler={setLastName}
-        labelText="Last Name"
-        hintText="enter your last name"
-        error={!validLastName}
-        disabled={locked}
-      />
-      <InputWithLabel
-        handler={setEmail}
-        labelText="Email"
-        hintText="enter your email"
-        error={!validEmail}
-        disabled={locked}
-      />
-      <InputWithLabel
-        handler={setPassword}
-        labelText="Password"
-        hintText="at least 6 characters"
-        obsure={true}
-        error={!validPassword}
-        disabled={locked}
-      />
-      <InputWithLabel
-        handler={setRepassword}
-        labelText="Repeat Password"
-        hintText="enter your password again"
-        obsure={true}
-        error={!validRepassword}
-        disabled={locked}
-      />
-      <br></br>
-      <MainButton
-        handler={register}
-        loading={isProcessing}
-        disabled={!valid || locked}
-      >
-        REGISTER
-      </MainButton>
-      <p className="text-red-700 text-center">{errorMessage}</p>
-      {isDone && (
-        <p className="text-center">
-          Almost done! Please check your email and verify your account
-        </p>
-      )}
-      <HorizontalLine />
-      <p className="text-center">
-        Already have an account? login with this{" "}
-        <Link
-          href="/login"
-          className="text-yellow-600 hover:text-yellow-500 transition-colors duration-300"
+    <SessionChecker jumpToIfAuthenticated="/reservations">
+      <CenterContentCard>
+        <div>
+          <h1 className="font-bold text-4xl text-center">REGISTER</h1>
+          <p className="text-center text-sm">
+            Lets join Batter and create a greener future together!
+          </p>
+        </div>
+        <HorizontalLine />
+        <InputWithLabel
+          handler={setFirstName}
+          labelText="First Name"
+          hintText="enter your first name"
+          error={!validFirstName}
+          disabled={locked}
+        />
+        <InputWithLabel
+          handler={setLastName}
+          labelText="Last Name"
+          hintText="enter your last name"
+          error={!validLastName}
+          disabled={locked}
+        />
+        <InputWithLabel
+          handler={setEmail}
+          labelText="Email"
+          hintText="enter your email"
+          error={!validEmail}
+          disabled={locked}
+        />
+        <InputWithLabel
+          handler={setPassword}
+          labelText="Password"
+          hintText="at least 6 characters"
+          obsure={true}
+          error={!validPassword}
+          disabled={locked}
+        />
+        <InputWithLabel
+          handler={setRepassword}
+          labelText="Repeat Password"
+          hintText="enter your password again"
+          obsure={true}
+          error={!validRepassword}
+          disabled={locked}
+        />
+        <br></br>
+        <MainButton
+          handler={register}
+          loading={isProcessing}
+          disabled={!valid || locked}
         >
-          link
-        </Link>
-      </p>
-    </CenterContentCard>
+          REGISTER
+        </MainButton>
+        <p className="text-red-700 text-center">{errorMessage}</p>
+        {isDone && (
+          <p className="text-center">
+            Almost done! Please check your email and verify your account
+          </p>
+        )}
+        <HorizontalLine />
+        <p className="text-center">
+          Already have an account? login with this{" "}
+          <Link
+            href="/login"
+            className="text-yellow-600 hover:text-yellow-500 transition-colors duration-300"
+          >
+            link
+          </Link>
+        </p>
+      </CenterContentCard>
+    </SessionChecker>
   );
 };
 
