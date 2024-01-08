@@ -31,9 +31,14 @@ const SessionChecker = ({
   }, [setUser, setIsGettingUser]);
 
   if (isThisGettingUser) return <Loading />;
-  if (jumpToIfAuthenticated && thisUser) router.push(jumpToIfAuthenticated);
-  if (jumpToIfUnauthenticated && !thisUser)
+  if (jumpToIfAuthenticated && thisUser) {
+    router.push(jumpToIfAuthenticated);
+    return <Loading />;
+  }
+  if (jumpToIfUnauthenticated && !thisUser) {
     router.push(jumpToIfUnauthenticated);
+    return <Loading />;
+  }
   return <>{children}</>;
 };
 
