@@ -13,6 +13,7 @@ const EmailConfirmedPage = () => {
   const searchParams = useSearchParams();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const [isDone, setIsDone] = useState<boolean>(false);
   const effectCalled = useRef<boolean>(false);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const EmailConfirmedPage = () => {
             return;
           }
           setIsProcessing(false);
+          setIsDone(true);
         });
     });
     effectCalled.current = true;
@@ -48,7 +50,7 @@ const EmailConfirmedPage = () => {
     <SessionChecker jumpToIfUnauthenticated="/register">
       <CenterContentCard>
         {isProcessing && <Loading />}
-        {!isProcessing && !isError && (
+        {!isProcessing && isDone && (
           <>
             <div>
               <h1 className="font-bold text-4xl text-center">SUCCESS</h1>
