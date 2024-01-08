@@ -1,5 +1,7 @@
 "use client";
 
+import Loading from "@/components/Loading";
+import SessionChecker from "@/components/SessionChecker";
 import supabaseClient from "@/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -16,7 +18,11 @@ const LogoutPage = () => {
       }
     );
   });
-  return <p>logging out...</p>;
+  return (
+    <SessionChecker jumpToIfUnauthenticated="/login">
+      <Loading />
+    </SessionChecker>
+  );
 };
 
 export default LogoutPage;
