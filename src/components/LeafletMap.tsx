@@ -36,8 +36,6 @@ const LeafletMap = ({
   position?: LatLng | null;
   setPosition?: Dispatch<SetStateAction<LatLng | null>>;
 }) => {
-  console.log(position);
-  console.log(setPosition);
   return (
     <MapContainer
       center={lat && lng ? [lat, lng] : [13.74, 100.53]}

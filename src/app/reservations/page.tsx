@@ -29,7 +29,6 @@ const ReservationsPage = () => {
         }
         setReservations(response.data);
         setIsGettingReservationInfo(false);
-        console.log(response.data);
       });
   }, [user]);
 
