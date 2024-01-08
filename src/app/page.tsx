@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full items-center">
-      <div className="flex flex-row items-center justify-center gap-20 w-full p-10 from-red-700 to-blue-500 bg-gradient-to-r">
+    <div className="flex flex-col w-full items-center gap-5">
+      <div className="flex flex-row items-center justify-center gap-20 w-full p-10 from-red-700 to-blue-500 bg-gradient-to-r rounded-xl shadow-xl">
         <div className="w-96 text-white">
           <h1 className="text-3xl">
             Welcome to the world of <br></br>
@@ -31,7 +31,7 @@ export default function Home() {
           height={300}
         />
       </div>
-      <div className="w-full flex flex-col items-center p-10 bg-gray-200">
+      <div className="w-full flex flex-col items-center p-10 from-gray-300 to-white bg-gradient-to-b rounded-xl">
         <h1 className="text-4xl font-bold">Our Story</h1>
         <p className="mb-4">
           See what Battter is all about and how it could help you!
@@ -45,7 +45,6 @@ export default function Home() {
           </video>
         </div>
       </div>
-      <div className="w-full bg-gray-600 p-2 text-white">Batter</div>
     </div>
   );
 }
