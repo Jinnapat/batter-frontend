@@ -106,6 +106,7 @@ const ProfilePage = () => {
       .select();
     if (updateResult.error) {
       setErrorMessage(updateResult.error.message);
+      setIsProcessing(false);
       return;
     }
     setUserInfo({
