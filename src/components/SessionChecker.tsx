@@ -11,7 +11,7 @@ const SessionChecker = ({
   jumpToIfAuthenticated,
   jumpToIfUnauthenticated,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   setUser?: Dispatch<SetStateAction<User | null>>;
   setIsGettingUser?: Dispatch<SetStateAction<boolean>>;
   jumpToIfAuthenticated?: string;
