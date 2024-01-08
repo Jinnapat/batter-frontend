@@ -7,78 +7,77 @@ import SessionChecker from "@/components/SessionChecker";
 import supabaseClient from "@/supabase/client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const EmailConfirmedPage = () => {
-  const [isDone, setIsDone] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const effectCalled = useRef<boolean>(false);
 
   useEffect(() => {
-    if (isDone) return;
+    if (effectCalled.current) return;
     const firstName = searchParams.get("first_name");
     const lastName = searchParams.get("last_name");
     const email = searchParams.get("email");
-    supabaseClient.auth.getSession().then((response) => {
-      if (response.error || !response.data.session) {
+    supabaseClient.auth.getUser().then((response) => {
+      if (response.error) {
         setIsError(true);
         return;
       }
       supabaseClient
         .from("accounts")
         .insert({
-          id: response.data.session.user.id,
+          id: response.data.user.id,
           first_name: firstName,
           last_name: lastName,
           email: email,
         })
         .then((addUserInfoResult) => {
           if (addUserInfoResult.error) {
-            console.log(addUserInfoResult.error);
             setIsError(true);
             return;
           }
           setIsProcessing(false);
         });
     });
-    setIsDone(true);
-  }, [isDone, searchParams]);
+    effectCalled.current = true;
+  }, [searchParams]);
 
   return (
-    // <SessionChecker jumpToIfUnauthenticated="/register">
-    <CenterContentCard>
-      {isProcessing && <Loading />}
-      {!isProcessing && !isError && (
-        <>
-          <div>
-            <h1 className="font-bold text-4xl text-center">SUCCESS</h1>
-            <p className="text-center text-sm">
-              Your email is verified! You can book our service with the link
-              below.
-            </p>
-          </div>
-          <Link href="/book">
-            <MainButton>BOOK NOW</MainButton>
-          </Link>
-        </>
-      )}
-      {!isProcessing && isError && (
-        <>
-          <div>
-            <h1 className="font-bold text-4xl text-center">ERROR OCCURED</h1>
-            <p className="text-center text-sm">
-              Your email verification link is invalid.<br></br> Try register
-              again with the link below.
-            </p>
-          </div>
-          <Link href="/register">
-            <MainButton>REGISTER AGAIN</MainButton>
-          </Link>
-        </>
-      )}
-    </CenterContentCard>
-    // </SessionChecker>
+    <SessionChecker jumpToIfUnauthenticated="/register">
+      <CenterContentCard>
+        {isProcessing && <Loading />}
+        {!isProcessing && !isError && (
+          <>
+            <div>
+              <h1 className="font-bold text-4xl text-center">SUCCESS</h1>
+              <p className="text-center text-sm">
+                Your email is verified! You can book our service with the link
+                below.
+              </p>
+            </div>
+            <Link href="/book">
+              <MainButton>BOOK NOW</MainButton>
+            </Link>
+          </>
+        )}
+        {!isProcessing && isError && (
+          <>
+            <div>
+              <h1 className="font-bold text-4xl text-center">ERROR OCCURED</h1>
+              <p className="text-center text-sm">
+                Your email verification link is invalid.<br></br> Try register
+                again with the link below.
+              </p>
+            </div>
+            <Link href="/register">
+              <MainButton>REGISTER AGAIN</MainButton>
+            </Link>
+          </>
+        )}
+      </CenterContentCard>
+    </SessionChecker>
   );
 };
 
