@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={kanit.className}>
         <NavBar />
-        <div className="flex flex-col items-center p-5">{children}</div>
+        <div className="flex flex-col items-center">{children}</div>
       </body>
     </html>
   );
