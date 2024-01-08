@@ -4,17 +4,19 @@ import Link from "next/link";
 import supabaseClient from "@/supabase/client";
 import { useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
+import { useParams } from "next/navigation";
 
 const NavBar = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
+  const params = useParams();
 
   useEffect(() => {
     supabaseClient.auth.getSession().then((e) => {
       setSession(e.data.session);
       setIsLoading(false);
     });
-  }, []);
+  }, [params]);
 
   return (
     <div className="w-full flex flex-row justify-between px-8 py-3 bg-green-600 shadow-lg text-white text-xl items-center">
