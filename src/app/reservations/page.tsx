@@ -4,18 +4,10 @@ import HorizontalLine from "@/components/HorizontalLine";
 import Loading from "@/components/Loading";
 import SessionChecker from "@/components/SessionChecker";
 import supabaseClient from "@/supabase/client";
+import { Reservation } from "@/types/reservation";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-type Reservation = {
-  id: string;
-  name: string;
-  status: string;
-  lat: number;
-  lng: number;
-  updated_at: string;
-};
 
 const ReservationsPage = () => {
   const [user, setUser] = useState<User | null>(null);
