@@ -9,7 +9,7 @@ const LogoutPage = () => {
   useEffect(() => {
     supabaseClient.auth.signOut().then(
       () => {
-        router.push("/");
+        router.push("/login");
       },
       () => {
         router.push("/profile");
