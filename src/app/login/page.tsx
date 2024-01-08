@@ -64,7 +64,7 @@ const LoginPage = () => {
         disabled={isProcessing}
       />
       <br></br>
-      <MainButton handler={login} loading={isProcessing}>
+      <MainButton handler={login} loading={isProcessing} disabled={!valid}>
         LOGIN
       </MainButton>
       <p className="text-red-700 text-center">{errorMessage}</p>
