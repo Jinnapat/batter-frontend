@@ -3,14 +3,18 @@
 import CenterContentCard from "@/components/CenterContentCard";
 import HorizontalLine from "@/components/HorizontalLine";
 import InputWithLabel from "@/components/InputWithLabel";
+import Loading from "@/components/Loading";
 import MainButton from "@/components/MainButton";
 import validateEmail from "@/helpers/emailValidator";
 import supabaseClient from "@/supabase/client";
+import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const LoginPage = () => {
+  const [isGettingUser, setIsGettingUser] = useState<boolean>(true);
+  const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -20,6 +24,13 @@ const LoginPage = () => {
   const validEmail = validateEmail(email);
   const validPassword = password.length >= 6;
   const valid = validEmail && validPassword;
+
+  useEffect(() => {
+    supabaseClient.auth.getUser().then((response) => {
+      setUser(response.data.user);
+      setIsGettingUser(false);
+    });
+  }, []);
 
   const login = async () => {
     setIsProcessing(true);
@@ -39,6 +50,8 @@ const LoginPage = () => {
     }
   };
 
+  if (isGettingUser) return <Loading />;
+  if (user) router.push("/reservations");
   return (
     <CenterContentCard>
       <div>
