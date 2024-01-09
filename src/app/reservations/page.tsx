@@ -52,6 +52,9 @@ const ReservationsPage = () => {
               <p className="w-1/4 text-lg text-center font-bold">Updated at</p>
             </div>
             <div className="h-0 w-full border border-black mt-2"></div>
+            {reservations.length == 0 && (
+              <p className="text-center py-10">No reservations</p>
+            )}
             {reservations.map((reservation) => {
               return (
                 <div key={reservation.id}>
