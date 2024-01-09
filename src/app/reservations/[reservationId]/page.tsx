@@ -11,6 +11,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import LeafletMapWrapper from "@/components/LeafletMapWrapper";
 import "leaflet/dist/leaflet.css";
 import { Reservation } from "@/types/reservation";
+import MainButton from "@/components/MainButton";
 
 const InfoSlot = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -87,6 +88,14 @@ const ReservationInfoPage = ({
                 title="Last Status Update"
                 value={new Date(reservation.updated_at).toLocaleString()}
               />
+              {reservation.status == "active" && (
+                <>
+                  <br></br>
+                  <Link href={`/status/${params.reservationId}`}>
+                    <MainButton>CHECK STATUS</MainButton>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="shadow-lg rounded-2xl p-5 bg-white w-full flex flex-col gap-3">
