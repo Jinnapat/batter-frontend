@@ -30,7 +30,7 @@ const InfoSlot = ({
   return (
     <>
       <div className="flex flex-row items-center">
-        <p className="w-1/3">{title}</p>
+        <p className="w-1/3 font-bold">{title}</p>
         {isEditMode && editable && setValue && (
           <input
             className={
@@ -52,9 +52,15 @@ const InfoSlot = ({
           />
         )}
         {isEditMode && !editable && (
-          <p className="w-2/3 overflow-hidden text-gray-500">{value}</p>
+          <p className="w-2/3 overflow-hidden text-gray-500 break-words text-wrap">
+            {value}
+          </p>
         )}
-        {!isEditMode && <p className="w-2/3 overflow-hidden">{currentValue}</p>}
+        {!isEditMode && (
+          <p className="w-2/3 overflow-hidden break-words text-wrap">
+            {currentValue}
+          </p>
+        )}
       </div>
       <div className="h-0 w-full border my-3"></div>
     </>
@@ -135,7 +141,7 @@ const ProfilePage = () => {
     <SessionChecker jumpToIfUnauthenticated="/login" setUser={setUser}>
       {!userInfo && <Loading />}
       {userInfo && (
-        <div className="w-full flex flex-col items-center max-w-2xl gap-3 shadow-lg rounded-2xl p-10 bg-white">
+        <div className="w-full flex flex-col items-center max-w-2xl gap-3 shadow-lg rounded-2xl p-5 sm:p-10 bg-white">
           <div className="w-full">
             <h1 className="font-bold text-4xl text-center">Your Profile</h1>
             <p className="text-center text-sm mb-3">

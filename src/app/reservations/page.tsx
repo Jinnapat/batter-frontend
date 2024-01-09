@@ -36,7 +36,7 @@ const ReservationsPage = () => {
     <SessionChecker jumpToIfUnauthenticated="/login" setUser={setUser}>
       {isGettingReservationInfo && <Loading />}
       {!isGettingReservationInfo && (
-        <div className="w-full flex flex-col items-center max-w-2xl gap-3 shadow-lg rounded-2xl p-5 bg-white">
+        <div className="w-full flex flex-col items-center max-w-2xl gap-3 shadow-lg rounded-2xl p-5 sm:p-10 bg-white">
           <div className="w-full">
             <h1 className="font-bold text-4xl text-center">
               Your Reservations

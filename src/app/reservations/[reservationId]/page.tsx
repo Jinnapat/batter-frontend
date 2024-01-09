@@ -55,7 +55,7 @@ const ReservationInfoPage = ({
       {isGettingReservationInfo && <Loading />}
       {!isGettingReservationInfo && reservation && (
         <div className="flex flex-col gap-3 max-w-2xl w-full">
-          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-5 bg-white">
+          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-5 sm:p-10 bg-white">
             <div className="w-full">
               <Link
                 href="/reservations"
