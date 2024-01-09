@@ -50,17 +50,17 @@ export default function Home() {
             </Link>
           </div>
           <Image
-            className="transition-transform hover:scale-110 duration-500 hover:rotate-3"
+            className="transition-transform hover:scale-110 duration-500 hover:rotate-3 hidden sm:block"
             src={batteryImage}
             alt="Battery image"
             width={300}
             height={300}
           />
         </div>
-        <div className="w-full flex flex-col items-center p-10">
+        <div className="w-full flex flex-col items-center">
           <div className="p-6 rounded-xl shadow-lg bg-white w-full max-w-4xl flex flex-col items-center">
             <h1 className="text-4xl font-bold">Our Story</h1>
-            <p className="mb-4">
+            <p className="mb-4 text-center">
               See what Battter is all about and how it could help you!
             </p>
             <video className="w-full border-2" controls>
