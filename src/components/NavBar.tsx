@@ -50,10 +50,18 @@ const FunctionMenu = ({
     );
   return (
     <>
-      <Link href="/login" className="hover:text-yellow-400 duration-300">
+      <Link
+        href="/login"
+        className="hover:text-yellow-400 duration-300"
+        onClick={() => setIsMenuOpened(false)}
+      >
         login
       </Link>
-      <Link href="/register" className="hover:text-yellow-400 duration-300">
+      <Link
+        href="/register"
+        className="hover:text-yellow-400 duration-300"
+        onClick={() => setIsMenuOpened(false)}
+      >
         register
       </Link>
     </>
