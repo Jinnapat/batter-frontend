@@ -10,7 +10,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InfluxDBClient } from "@influxdata/influxdb3-client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  PointElement,
+  LineElement,
+} from "chart.js";
 import { Line } from "react-chartjs-2";
+
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
 const BatteryStatusPage = ({
   params,
@@ -21,7 +31,8 @@ const BatteryStatusPage = ({
     useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [reservation, setReservation] = useState<Reservation | null>(null);
-  const [labels, setLabels] = useState<string[]>([]);
+  const [labels, setLabels] = useState<string[]>(["Sun", "Mon", "Tues"]);
+  const [voltage, setVoltage] = useState<number[]>([3.45, 3.12, 3.45]);
 
   useEffect(() => {
     supabaseClient
@@ -60,7 +71,7 @@ const BatteryStatusPage = ({
         <p>Cannot find information about this reservation</p>
       )}
       {!isGettingReservationInfo && reservation && (
-        <div className="flex flex-col gap-3 max-w-2xl w-full">
+        <div className="flex flex-col gap-6 max-w-2xl w-full">
           <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
             <div className="w-full">
               <Link
@@ -77,7 +88,57 @@ const BatteryStatusPage = ({
               </p>
               <p className="text-sm text-center text-red-600">{errorMessage}</p>
               <HorizontalLine />
+              <br></br>
+              <h2 className="text-center">Battery Voltage</h2>
+              <Line
+                data={{
+                  labels,
+                  datasets: [
+                    {
+                      label: "My First Dataset",
+                      data: [65, 59, 80],
+                      fill: false,
+                      borderColor: "rgb(75, 192, 192)",
+                      tension: 0.1,
+                    },
+                  ],
+                }}
+              />
             </div>
+          </div>
+          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
+            <h2 className="text-center">Total Consumption</h2>
+            <Line
+              data={{
+                labels,
+                datasets: [
+                  {
+                    label: "My First Dataset",
+                    data: [65, 59, 80],
+                    fill: false,
+                    borderColor: "rgb(75, 192, 192)",
+                    tension: 0.1,
+                  },
+                ],
+              }}
+            />
+          </div>
+          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
+            <h2 className="text-center">Power Output</h2>
+            <Line
+              data={{
+                labels,
+                datasets: [
+                  {
+                    label: "My First Dataset",
+                    data: [65, 59, 80],
+                    fill: false,
+                    borderColor: "rgb(75, 192, 192)",
+                    tension: 0.1,
+                  },
+                ],
+              }}
+            />
           </div>
         </div>
       )}
