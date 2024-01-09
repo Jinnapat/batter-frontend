@@ -3,6 +3,7 @@
 import HorizontalLine from "@/components/HorizontalLine";
 import Loading from "@/components/Loading";
 import SessionChecker from "@/components/SessionChecker";
+import validatePhone from "@/helpers/phoneValidator";
 import supabaseClient from "@/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -15,6 +16,7 @@ const InfoSlot = ({
   isEditMode,
   editable,
   disabled,
+  error,
 }: {
   title: string;
   currentValue: string;
@@ -23,6 +25,7 @@ const InfoSlot = ({
   isEditMode: boolean;
   editable: boolean;
   disabled: boolean;
+  error?: boolean;
 }) => {
   return (
     <>
@@ -30,7 +33,10 @@ const InfoSlot = ({
         <p className="w-1/3">{title}</p>
         {isEditMode && editable && setValue && (
           <input
-            className=" rounded-md w-2/3 border p-1"
+            className={
+              "rounded-md w-2/3 border p-1 transition-colors duration-300 outline-none ring-0" +
+              (error ? " border-red-600" : "")
+            }
             type="text"
             value={value}
             onChange={(e) => setValue(e.currentTarget.value)}
@@ -72,6 +78,11 @@ const ProfilePage = () => {
   const [phone, setPhone] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const validFirstName = firstName != "";
+  const validLastName = lastName != "";
+  const validPhone = phone == "" || validatePhone(phone);
+  const valid = validFirstName && validLastName && validPhone;
 
   useEffect(() => {
     if (!user) return;
@@ -139,6 +150,7 @@ const ProfilePage = () => {
               isEditMode={isEditMode}
               editable={true}
               disabled={isProcessing}
+              error={!validFirstName}
             />
             <InfoSlot
               title="Last Name"
@@ -148,6 +160,7 @@ const ProfilePage = () => {
               isEditMode={isEditMode}
               editable={true}
               disabled={isProcessing}
+              error={!validLastName}
             />
             <InfoSlot
               title="Email"
@@ -165,6 +178,7 @@ const ProfilePage = () => {
               isEditMode={isEditMode}
               editable={true}
               disabled={isProcessing}
+              error={!validPhone}
             />
             <br></br>
             {!isEditMode && (
@@ -194,9 +208,9 @@ const ProfilePage = () => {
                   CANCEL
                 </button>
                 <button
-                  className="rounded-lg px-5 py-2 bg-green-600 text-white transition-colors hover:bg-green-700 duration-300"
+                  className="rounded-lg px-5 py-2 bg-green-600 text-white transition-colors hover:bg-green-700 duration-300 disabled:text-gray-400"
                   onClick={editProfile}
-                  disabled={isProcessing}
+                  disabled={isProcessing || !valid}
                 >
                   {isProcessing ? <Loading /> : "CONFIRM"}
                 </button>
