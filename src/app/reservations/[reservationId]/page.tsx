@@ -16,9 +16,9 @@ import MainButton from "@/components/MainButton";
 const InfoSlot = ({ title, value }: { title: string; value: string }) => {
   return (
     <>
-      <div className="flex flex-row items-center">
-        <p className="w-1/3">{title}</p>
-        <p className="w-2/3 text-wrap">{value}</p>
+      <div className="flex flex-row items-center gap-2">
+        <p className="w-5/12 text-wrap break-words font-bold">{title}</p>
+        <p className="w-[56%] text-wrap break-words">{value}</p>
       </div>
       <div className="h-0 w-full border my-3"></div>
     </>
@@ -55,7 +55,7 @@ const ReservationInfoPage = ({
       {isGettingReservationInfo && <Loading />}
       {!isGettingReservationInfo && reservation && (
         <div className="flex flex-col gap-3 max-w-2xl w-full">
-          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
+          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-5 bg-white">
             <div className="w-full">
               <Link
                 href="/reservations"
@@ -76,11 +76,11 @@ const ReservationInfoPage = ({
               <InfoSlot title="Event Name" value={reservation.name} />
               <InfoSlot title="Description" value={reservation.description} />
               <InfoSlot
-                title="Start"
+                title="Start Date"
                 value={new Date(reservation.start).toLocaleString()}
               />
               <InfoSlot
-                title="End"
+                title="End Date"
                 value={new Date(reservation.end).toLocaleString()}
               />
               <InfoSlot title="Status" value={reservation.status} />

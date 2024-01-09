@@ -36,7 +36,7 @@ const ReservationsPage = () => {
     <SessionChecker jumpToIfUnauthenticated="/login" setUser={setUser}>
       {isGettingReservationInfo && <Loading />}
       {!isGettingReservationInfo && (
-        <div className="w-full flex flex-col items-center max-w-2xl gap-3 shadow-lg rounded-2xl p-10 bg-white">
+        <div className="w-full flex flex-col items-center max-w-2xl gap-3 shadow-lg rounded-2xl p-5 bg-white">
           <div className="w-full">
             <h1 className="font-bold text-4xl text-center">
               Your Reservations
@@ -47,9 +47,13 @@ const ReservationsPage = () => {
             <p className="text-sm text-center text-red-600">{errorMessage}</p>
             <HorizontalLine />
             <div className="flex flex-row items-center justify-between">
-              <p className="w-2/4 text-lg text-center font-bold">Name</p>
+              <p className="w-8/12 text-lg text-center font-bold sm:w-2/4">
+                Name
+              </p>
               <p className="w-1/4 text-lg text-center font-bold">Status</p>
-              <p className="w-1/4 text-lg text-center font-bold">Updated at</p>
+              <p className="w-1/4 text-lg text-center font-bold hidden sm:block">
+                Updated at
+              </p>
             </div>
             <div className="h-0 w-full border border-black mt-2"></div>
             {reservations.length == 0 && (
@@ -58,17 +62,17 @@ const ReservationsPage = () => {
             {reservations.map((reservation) => {
               return (
                 <div key={reservation.id}>
-                  <div className="flex flex-row items-center justify-between h-12">
-                    <div className="flex flex-row justify-center w-2/4">
+                  <div className="flex flex-row items-center justify-between py-4">
+                    <div className="flex flex-row justify-center w-8/12 sm:w-2/4">
                       <Link
                         href={`/reservations/${reservation.id}`}
-                        className="text-center hover:text-yellow-500 duration-300 transition-colors"
+                        className="text-center hover:text-yellow-500 duration-300 transition-colors break-words w-full"
                       >
                         {reservation.name}
                       </Link>
                     </div>
                     <p className="w-1/4 text-center">{reservation.status}</p>
-                    <p className="w-1/4 text-center">
+                    <p className="w-1/4 text-center hidden sm:block">
                       {new Date(reservation.updated_at).toLocaleDateString()}
                     </p>
                   </div>
