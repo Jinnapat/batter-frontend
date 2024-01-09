@@ -2,29 +2,48 @@
 
 import Link from "next/link";
 import supabaseClient from "@/supabase/client";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { useParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faHamburger } from "@fortawesome/free-solid-svg-icons";
 
-const FunctionMenu = ({ session }: { session: Session | null }) => {
+const FunctionMenu = ({
+  session,
+  setIsMenuOpened,
+}: {
+  session: Session | null;
+  setIsMenuOpened: Dispatch<SetStateAction<boolean>>;
+}) => {
   if (session)
     return (
       <>
-        <Link href="/book" className="hover:text-yellow-400 duration-300">
+        <Link
+          href="/book"
+          className="hover:text-yellow-400 duration-300"
+          onClick={() => setIsMenuOpened(false)}
+        >
           book
         </Link>
         <Link
           href="/reservations"
           className="hover:text-yellow-400 duration-300"
+          onClick={() => setIsMenuOpened(false)}
         >
           reservations
         </Link>
-        <Link href="/profile" className="hover:text-yellow-400 duration-300">
+        <Link
+          href="/profile"
+          className="hover:text-yellow-400 duration-300"
+          onClick={() => setIsMenuOpened(false)}
+        >
           profile
         </Link>
-        <Link href="/logout" className="hover:text-yellow-400 duration-300">
+        <Link
+          href="/logout"
+          className="hover:text-yellow-400 duration-300"
+          onClick={() => setIsMenuOpened(false)}
+        >
           logout
         </Link>
       </>
@@ -67,7 +86,9 @@ const NavBar = () => {
           <FontAwesomeIcon icon={faBars} />
         </button>
         <div className="sm:flex flex-row gap-5 items-center hidden">
-          {!isLoading && <FunctionMenu session={session} />}
+          {!isLoading && (
+            <FunctionMenu session={session} setIsMenuOpened={setIsMenuOpened} />
+          )}
         </div>
       </div>
       <div
@@ -76,7 +97,9 @@ const NavBar = () => {
           (isMenuOpened ? "" : " scale-y-0")
         }
       >
-        {!isLoading && <FunctionMenu session={session} />}
+        {!isLoading && (
+          <FunctionMenu session={session} setIsMenuOpened={setIsMenuOpened} />
+        )}
       </div>
     </div>
   );
