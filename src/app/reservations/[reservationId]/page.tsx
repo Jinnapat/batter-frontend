@@ -1,7 +1,7 @@
 "use client";
 
 import SessionChecker from "@/components/SessionChecker";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import supabaseClient from "@/supabase/client";
 import Loading from "@/components/Loading";
 import HorizontalLine from "@/components/HorizontalLine";
@@ -34,6 +34,9 @@ const ReservationInfoPage = ({
     useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [reservation, setReservation] = useState<Reservation | null>(null);
+  const reservationRef = useRef<Reservation>();
+  const enableCheckStatus =
+    reservation != null && reservation.status == "active";
 
   useEffect(() => {
     supabaseClient
@@ -45,9 +48,26 @@ const ReservationInfoPage = ({
           setErrorMessage(response.error.message);
           return;
         }
+        reservationRef.current = response.data[0];
         setReservation(response.data[0]);
         setIsGettingReservationInfo(false);
       });
+    supabaseClient
+      .channel("room1")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "reservations",
+          filter: `id=eq.${params.reservationId}`,
+        },
+        (payload) => {
+          reservationRef.current = payload.new as Reservation;
+          setReservation(payload.new as Reservation);
+        }
+      )
+      .subscribe();
   }, [params]);
 
   return (
