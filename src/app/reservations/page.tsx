@@ -7,7 +7,7 @@ import supabaseClient from "@/supabase/client";
 import { Reservation } from "@/types/reservation";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ReservationsPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -15,6 +15,7 @@ const ReservationsPage = () => {
     useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const reservationsRef = useRef<Reservation[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -27,9 +28,31 @@ const ReservationsPage = () => {
           setErrorMessage(response.error.message);
           return;
         }
+        reservationsRef.current = response.data;
         setReservations(response.data);
         setIsGettingReservationInfo(false);
       });
+    supabaseClient
+      .channel("room1")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "reservations",
+          filter: `owner_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const nextReservations = reservationsRef.current.map((reservation) =>
+            reservation.id != payload.old.id
+              ? reservation
+              : (payload.new as Reservation)
+          );
+          reservationsRef.current = nextReservations;
+          setReservations(nextReservations);
+        }
+      )
+      .subscribe();
   }, [user]);
 
   return (
