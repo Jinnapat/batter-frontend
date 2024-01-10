@@ -12,6 +12,7 @@ import LeafletMapWrapper from "@/components/LeafletMapWrapper";
 import "leaflet/dist/leaflet.css";
 import { Reservation } from "@/types/reservation";
 import MainButton from "@/components/MainButton";
+import { useRouter } from "next/navigation";
 
 const InfoSlot = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -30,6 +31,7 @@ const ReservationInfoPage = ({
 }: {
   params: { reservationId: string };
 }) => {
+  const router = useRouter();
   const [isGettingReservationInfo, setIsGettingReservationInfo] =
     useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -108,14 +110,13 @@ const ReservationInfoPage = ({
                 title="Last Status Update"
                 value={new Date(reservation.updated_at).toLocaleString()}
               />
-              {reservation.status == "active" && (
-                <>
-                  <br></br>
-                  <Link href={`/status/${params.reservationId}`}>
-                    <MainButton>CHECK STATUS</MainButton>
-                  </Link>
-                </>
-              )}
+              <br></br>
+              <MainButton
+                disabled={!enableCheckStatus}
+                handler={() => router.push(`/status/${params.reservationId}`)}
+              >
+                CHECK STATUS
+              </MainButton>
             </div>
           </div>
           <div className="shadow-lg rounded-2xl p-5 bg-white w-full flex flex-col gap-3">
