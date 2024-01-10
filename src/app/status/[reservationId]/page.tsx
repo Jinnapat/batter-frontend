@@ -22,6 +22,38 @@ import { Line } from "react-chartjs-2";
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
+const LineChartWithTitle = ({
+  title,
+  labels,
+  data,
+  borderColor,
+}: {
+  title: string;
+  labels: string[];
+  data: number[];
+  borderColor: string;
+}) => {
+  return (
+    <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
+      <h2 className="text-center">{title}</h2>
+      <Line
+        data={{
+          labels,
+          datasets: [
+            {
+              label: title,
+              data,
+              fill: false,
+              borderColor,
+              tension: 0.5,
+            },
+          ],
+        }}
+      />
+    </div>
+  );
+};
+
 const BatteryStatusPage = ({
   params,
 }: {
@@ -31,8 +63,10 @@ const BatteryStatusPage = ({
     useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [reservation, setReservation] = useState<Reservation | null>(null);
-  const [labels, setLabels] = useState<string[]>(["Sun", "Mon", "Tues"]);
-  const [voltage, setVoltage] = useState<number[]>([3.45, 3.12, 3.45]);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [batteryVoltages, setBatteryVoltages] = useState<number[]>([]);
+  const [totalConsumptions, setTotalConsumptions] = useState<number[]>([]);
+  const [powerOutputs, setPowerOutputs] = useState<number[]>([]);
 
   useEffect(() => {
     supabaseClient
@@ -48,6 +82,34 @@ const BatteryStatusPage = ({
         setIsGettingReservationInfo(false);
       });
   }, [params]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const voltage = Math.random() + 12.0;
+      const power = Math.random() + 1.0;
+      const nextBatteryVoltages = [...batteryVoltages, voltage];
+      const nextPowerOutputs = [...powerOutputs, power];
+      const lastTotalConsumption = totalConsumptions.at(-1);
+      const nextTotalConsumption = [
+        ...totalConsumptions,
+        lastTotalConsumption != undefined
+          ? lastTotalConsumption + power
+          : power,
+      ];
+      const nextLabels = [...labels, new Date().toLocaleTimeString()];
+      if (nextLabels.length > 10) {
+        setBatteryVoltages(nextBatteryVoltages.slice(1));
+        setPowerOutputs(nextPowerOutputs.slice(1));
+        setTotalConsumptions(nextTotalConsumption.slice(1));
+        setLabels(nextLabels.slice(1));
+        return;
+      }
+      setBatteryVoltages(nextBatteryVoltages);
+      setPowerOutputs(nextPowerOutputs);
+      setTotalConsumptions(nextTotalConsumption);
+      setLabels(nextLabels);
+    }, 2000);
+  }, [batteryVoltages, labels, powerOutputs, totalConsumptions]);
 
   // useEffect(() => {
   //   const createListener = async () => {
@@ -88,58 +150,26 @@ const BatteryStatusPage = ({
               </p>
               <p className="text-sm text-center text-red-600">{errorMessage}</p>
               <HorizontalLine />
-              <br></br>
-              <h2 className="text-center">Battery Voltage</h2>
-              <Line
-                data={{
-                  labels,
-                  datasets: [
-                    {
-                      label: "My First Dataset",
-                      data: [65, 59, 80],
-                      fill: false,
-                      borderColor: "rgb(75, 192, 192)",
-                      tension: 0.1,
-                    },
-                  ],
-                }}
-              />
             </div>
           </div>
-          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
-            <h2 className="text-center">Total Consumption</h2>
-            <Line
-              data={{
-                labels,
-                datasets: [
-                  {
-                    label: "My First Dataset",
-                    data: [65, 59, 80],
-                    fill: false,
-                    borderColor: "rgb(75, 192, 192)",
-                    tension: 0.1,
-                  },
-                ],
-              }}
-            />
-          </div>
-          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
-            <h2 className="text-center">Power Output</h2>
-            <Line
-              data={{
-                labels,
-                datasets: [
-                  {
-                    label: "My First Dataset",
-                    data: [65, 59, 80],
-                    fill: false,
-                    borderColor: "rgb(75, 192, 192)",
-                    tension: 0.1,
-                  },
-                ],
-              }}
-            />
-          </div>
+          <LineChartWithTitle
+            title="Battery Voltage"
+            labels={labels}
+            data={batteryVoltages}
+            borderColor="rgb(75, 192, 192)"
+          />
+          <LineChartWithTitle
+            title="Total Consumption"
+            labels={labels}
+            data={totalConsumptions}
+            borderColor="rgb(192, 192, 75)"
+          />
+          <LineChartWithTitle
+            title="Power Output"
+            labels={labels}
+            data={powerOutputs}
+            borderColor="rgb(192, 75, 192)"
+          />
         </div>
       )}
     </SessionChecker>
