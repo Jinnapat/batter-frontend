@@ -65,7 +65,7 @@ export default function Home() {
             </p>
             <video className="w-full border-2" controls>
               <source
-                src="https://lislkdrqthbcxlhuqbzw.supabase.co/storage/v1/object/public/image/804ebcf1-47db-4e0e-bfc9-a47aef6395ed.mp4?t=2024-01-08T18%3A33%3A08.037Z"
+                src="https://lislkdrqthbcxlhuqbzw.supabase.co/storage/v1/object/public/batter-preview/BATTER_EDIT3_small.mp4?t=2024-01-10T16%3A38%3A50.221Z"
                 type="video/mp4"
               ></source>
             </video>
