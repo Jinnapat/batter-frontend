@@ -34,7 +34,7 @@ const LineChartWithTitle = ({
   borderColor: string;
 }) => {
   return (
-    <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
+    <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-3 sm:p-10 bg-white">
       <h2 className="text-center">{title}</h2>
       <Line
         data={{
@@ -134,7 +134,7 @@ const BatteryStatusPage = ({
       )}
       {!isGettingReservationInfo && reservation && (
         <div className="flex flex-col gap-6 max-w-2xl w-full">
-          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-10 bg-white">
+          <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-5 sm:p-10 bg-white">
             <div className="w-full">
               <Link
                 href={`/reservations/${params.reservationId}`}
