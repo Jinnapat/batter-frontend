@@ -27,7 +27,6 @@ const ResetPasswordPage = () => {
   useEffect(() => {
     supabaseClient.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") {
-        console.log("PASSWORD_RECOVERY", session);
         setIsValidPasswordRecovery(true);
         setIsWaitingForPasswordRecoveryEvent(false);
       }
@@ -53,64 +52,62 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div>
-      <SessionChecker jumpToIfAuthenticated="/reservations">
-        {isWaitingForPasswordRecoveryEvent && <Loading />}
-        {!isWaitingForPasswordRecoveryEvent && !isValidPasswordRecovery && (
-          <CenterContentCard>
-            <div>
-              <h1 className="font-bold text-4xl text-center">
-                INVALID RESET PASSWORD
-              </h1>
-              <p className="text-red-700 text-center text-sm">
-                It seems like your password reset link is invalid.
-              </p>
-            </div>
-            <HorizontalLine />
-            <Link href="/forget_password">
-              <MainButton>TRY AGAIN</MainButton>
-            </Link>
-          </CenterContentCard>
-        )}
-        {!isWaitingForPasswordRecoveryEvent && isValidPasswordRecovery && (
-          <CenterContentCard>
-            <div>
-              <h1 className="font-bold text-4xl text-center">RESET PASSWORD</h1>
-              <p className="text-center text-sm">
-                Set your new password. Make sure to use strong password.
-              </p>
-            </div>
-            <HorizontalLine />
-            <InputWithLabel
-              handler={setPassword}
-              labelText="New Password"
-              hintText="enter your new password"
-              error={!valid}
-              disabled={isProcessing || isDone}
-            />
-            <MainButton
-              handler={resetPasswordChange}
-              loading={isProcessing}
-              disabled={!valid || isDone}
-            >
-              CHANGE PASSWORD
-            </MainButton>
-            <p className="text-red-700 text-center">{errorMessage}</p>
-            {isDone && (
-              <p className="text-center">
-                You password was changed successfully! Go back to{" "}
-                <Link
-                  href="/login"
-                  className="text-yellow-600 hover:text-yellow-700 transition-colors duration-300"
-                >
-                  login
-                </Link>
-              </p>
-            )}
-          </CenterContentCard>
-        )}
-      </SessionChecker>
-    </div>
+    <>
+      {isWaitingForPasswordRecoveryEvent && <Loading />}
+      {!isWaitingForPasswordRecoveryEvent && !isValidPasswordRecovery && (
+        <CenterContentCard>
+          <div>
+            <h1 className="font-bold text-4xl text-center">
+              INVALID RESET PASSWORD
+            </h1>
+            <p className="text-red-700 text-center text-sm">
+              It seems like your password reset link is invalid.
+            </p>
+          </div>
+          <HorizontalLine />
+          <Link href="/forget_password">
+            <MainButton>TRY AGAIN</MainButton>
+          </Link>
+        </CenterContentCard>
+      )}
+      {!isWaitingForPasswordRecoveryEvent && isValidPasswordRecovery && (
+        <CenterContentCard>
+          <div>
+            <h1 className="font-bold text-4xl text-center">RESET PASSWORD</h1>
+            <p className="text-center text-sm">
+              Set your new password. Make sure to use strong password.
+            </p>
+          </div>
+          <HorizontalLine />
+          <InputWithLabel
+            handler={setPassword}
+            labelText="New Password"
+            hintText="enter your new password"
+            error={!valid}
+            disabled={isProcessing || isDone}
+          />
+          <MainButton
+            handler={resetPasswordChange}
+            loading={isProcessing}
+            disabled={!valid || isDone}
+          >
+            CHANGE PASSWORD
+          </MainButton>
+          <p className="text-red-700 text-center">{errorMessage}</p>
+          {isDone && (
+            <p className="text-center">
+              You password was changed successfully! Go back to{" "}
+              <Link
+                href="/profile"
+                className="text-yellow-600 hover:text-yellow-700 transition-colors duration-300"
+              >
+                profile
+              </Link>
+            </p>
+          )}
+        </CenterContentCard>
+      )}
+    </>
   );
 };
 
