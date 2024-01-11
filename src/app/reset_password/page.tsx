@@ -81,6 +81,7 @@ const ResetPasswordPage = () => {
             hintText="enter your new password at least 6 characters"
             error={!valid}
             disabled={isProcessing || isDone}
+            obsure={true}
           />
           <MainButton
             handler={resetPasswordChange}
