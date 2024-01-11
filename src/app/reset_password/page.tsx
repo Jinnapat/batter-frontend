@@ -5,7 +5,6 @@ import HorizontalLine from "@/components/HorizontalLine";
 import InputWithLabel from "@/components/InputWithLabel";
 import Loading from "@/components/Loading";
 import MainButton from "@/components/MainButton";
-import SessionChecker from "@/components/SessionChecker";
 import supabaseClient from "@/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -26,6 +25,7 @@ const ResetPasswordPage = () => {
 
   useEffect(() => {
     supabaseClient.auth.onAuthStateChange((event, session) => {
+      console.log(event);
       if (event === "PASSWORD_RECOVERY") {
         setIsValidPasswordRecovery(true);
         setIsWaitingForPasswordRecoveryEvent(false);
