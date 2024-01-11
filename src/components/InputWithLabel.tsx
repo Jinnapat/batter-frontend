@@ -29,7 +29,7 @@ const InputWithLabel = ({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <span className="text-md mb-2">{labelText}</span>
       <div
         className={`flex flex-row py-2 border-2 rounded-full bg-gray-600 pl-4 pr-2 items-center gap-2 transition-colors duration-500 ${
