@@ -57,14 +57,23 @@ const LoginPage = () => {
           error={!validEmail}
           disabled={isProcessing}
         />
-        <InputWithLabel
-          handler={setPassword}
-          labelText="Password"
-          hintText="at least 6 characters"
-          obsure={true}
-          error={!validPassword}
-          disabled={isProcessing}
-        />
+        <div className="flex flex-col w-full items-end">
+          <InputWithLabel
+            handler={setPassword}
+            labelText="Password"
+            hintText="at least 6 characters"
+            obsure={true}
+            error={!validPassword}
+            disabled={isProcessing}
+          />
+          <Link
+            href="/forget_password"
+            className="hover:text-yellow-500 transition-colors duration-300"
+          >
+            forget password?
+          </Link>
+        </div>
+
         <br></br>
         <MainButton handler={login} loading={isProcessing} disabled={!valid}>
           LOGIN
