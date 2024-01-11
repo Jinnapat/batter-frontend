@@ -24,16 +24,12 @@ const ResetPasswordPage = () => {
   const valid = password.length >= 6;
 
   useEffect(() => {
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      console.log(event);
-      if (event === "PASSWORD_RECOVERY") {
+    supabaseClient.auth.getUser().then((response) => {
+      if (response.data.user) {
         setIsValidPasswordRecovery(true);
-        setIsWaitingForPasswordRecoveryEvent(false);
       }
-    });
-    setTimeout(() => {
       setIsWaitingForPasswordRecoveryEvent(false);
-    }, 5000);
+    });
   }, []);
 
   const resetPasswordChange = async () => {
@@ -82,7 +78,7 @@ const ResetPasswordPage = () => {
           <InputWithLabel
             handler={setPassword}
             labelText="New Password"
-            hintText="enter your new password"
+            hintText="enter your new password at least 6 characters"
             error={!valid}
             disabled={isProcessing || isDone}
           />

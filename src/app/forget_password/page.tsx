@@ -7,19 +7,13 @@ import MainButton from "@/components/MainButton";
 import SessionChecker from "@/components/SessionChecker";
 import validateEmail from "@/helpers/emailValidator";
 import supabaseClient from "@/supabase/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const ForgetPasswordPage = () => {
   const [email, setEmail] = useState<string>("");
   const [isDone, setIsDone] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  useEffect(() => {
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      console.log(event);
-    });
-  }, []);
 
   const valid = validateEmail(email);
 
