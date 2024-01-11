@@ -6,6 +6,7 @@ import SessionChecker from "@/components/SessionChecker";
 import validatePhone from "@/helpers/phoneValidator";
 import supabaseClient from "@/supabase/client";
 import { User } from "@supabase/supabase-js";
+import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const InfoSlot = ({
@@ -186,6 +187,15 @@ const ProfilePage = () => {
               disabled={isProcessing}
               error={!validPhone}
             />
+            <div className="flex flex-row items-center">
+              <p className="w-1/3 font-bold">Password</p>
+              <Link href="/reset_password">
+                <button className="rounded-full px-2 py bg-blue-600 text-white transition-colors hover:bg-blue-700 duration-300 text-sm">
+                  RESET PASSWORD
+                </button>
+              </Link>
+            </div>
+            <div className="h-0 w-full border my-3"></div>
             <br></br>
             {!isEditMode && (
               <button
