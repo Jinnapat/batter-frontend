@@ -7,9 +7,9 @@ import supabaseClient from "@/supabase/client";
 import { Reservation } from "@/types/reservation";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { InfluxDBClient } from "@influxdata/influxdb3-client";
+import { FluxTableMetaData, InfluxDB } from "@influxdata/influxdb-client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Chart,
   CategoryScale,
@@ -36,20 +36,25 @@ const LineChartWithTitle = ({
   return (
     <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-3 sm:p-10 bg-white">
       <h2 className="text-center">{title}</h2>
-      <Line
-        data={{
-          labels,
-          datasets: [
-            {
-              label: title,
-              data,
-              fill: false,
-              borderColor,
-              tension: 0.5,
-            },
-          ],
-        }}
-      />
+      {data.length == 0 && (
+        <p className="text-sm mt-5 text-red-700">No Recent Data</p>
+      )}
+      {data.length > 0 && (
+        <Line
+          data={{
+            labels,
+            datasets: [
+              {
+                label: title,
+                data,
+                fill: false,
+                borderColor,
+                tension: 0.5,
+              },
+            ],
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -61,12 +66,60 @@ const BatteryStatusPage = ({
 }) => {
   const [isGettingReservationInfo, setIsGettingReservationInfo] =
     useState<boolean>(true);
+  const [isGettingInfluxDBData, setIsGettingInfluxDBData] =
+    useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [labels, setLabels] = useState<string[]>([]);
-  const [batteryVoltages, setBatteryVoltages] = useState<number[]>([]);
   const [totalConsumptions, setTotalConsumptions] = useState<number[]>([]);
   const [powerOutputs, setPowerOutputs] = useState<number[]>([]);
+
+  const powerOutputsRef = useRef<number[]>([]);
+  const totalConsumptionsRef = useRef<number[]>([]);
+  const labelsRef = useRef<string[]>([]);
+  const lastDateRef = useRef<Date>();
+
+  const getInfluxDBData = async () => {
+    const url = process.env.NEXT_PUBLIC_INFLUXDB_HOST as string;
+    const token = process.env.NEXT_PUBLIC_INFLUXDB_TOKEN as string;
+    const org = process.env.NEXT_PUBLIC_INFLUXDB_ORG as string;
+
+    const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
+    const fluxQuery =
+      'from(bucket: "Batter") |> range(start: -8h) |> filter(fn: (r) => r._measurement == "W" and r.entity_id == "modbus_inverter_power" and r._field == "value")';
+
+    queryApi.queryRows(fluxQuery, {
+      next: (row: string[], tableMeta: FluxTableMetaData) => {
+        const o = tableMeta.toObject(row);
+        const date = new Date(o._time);
+        const power = parseInt(o._value);
+        if (!lastDateRef.current) {
+          totalConsumptionsRef.current.push(0);
+          setTotalConsumptions(totalConsumptionsRef.current);
+        } else {
+          const dif = (date.valueOf() - lastDateRef.current.valueOf()) / 1000;
+          totalConsumptionsRef.current.push(
+            totalConsumptionsRef.current[
+              totalConsumptionsRef.current.length - 1
+            ] +
+              power * dif
+          );
+          setTotalConsumptions(totalConsumptionsRef.current);
+        }
+        powerOutputsRef.current.push(power);
+        labelsRef.current.push(date.toLocaleString());
+        setPowerOutputs(powerOutputsRef.current);
+        setLabels(labelsRef.current);
+        lastDateRef.current = date;
+      },
+      error: (error: Error) => {
+        setErrorMessage(error.message);
+      },
+      complete: () => {
+        setIsGettingInfluxDBData(false);
+      },
+    });
+  };
 
   useEffect(() => {
     supabaseClient
@@ -81,58 +134,22 @@ const BatteryStatusPage = ({
         setReservation(response.data[0]);
         setIsGettingReservationInfo(false);
       });
+    setInterval(() => {
+      powerOutputsRef.current = [];
+      totalConsumptionsRef.current = [];
+      labelsRef.current = [];
+      lastDateRef.current = undefined;
+      getInfluxDBData();
+    }, 3000);
   }, [params]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      const voltage = Math.random() + 12.0;
-      const power = Math.random() + 1.0;
-      const nextBatteryVoltages = [...batteryVoltages, voltage];
-      const nextPowerOutputs = [...powerOutputs, power];
-      const lastTotalConsumption = totalConsumptions.at(-1);
-      const nextTotalConsumption = [
-        ...totalConsumptions,
-        lastTotalConsumption != undefined
-          ? lastTotalConsumption + power
-          : power,
-      ];
-      const nextLabels = [...labels, new Date().toLocaleTimeString()];
-      if (nextLabels.length > 10) {
-        setBatteryVoltages(nextBatteryVoltages.slice(1));
-        setPowerOutputs(nextPowerOutputs.slice(1));
-        setTotalConsumptions(nextTotalConsumption.slice(1));
-        setLabels(nextLabels.slice(1));
-        return;
-      }
-      setBatteryVoltages(nextBatteryVoltages);
-      setPowerOutputs(nextPowerOutputs);
-      setTotalConsumptions(nextTotalConsumption);
-      setLabels(nextLabels);
-    }, 2000);
-  }, [batteryVoltages, labels, powerOutputs, totalConsumptions]);
-
-  // useEffect(() => {
-  //   const createListener = async () => {
-  //     const client = new InfluxDBClient({
-  //       host: process.env.NEXT_PUBLIC_INFLUXDB_HOST as string,
-  //       token: process.env.NEXT_PUBLIC_INFLUXDB_TOKEN as string,
-  //     });
-  //     console.log(client);
-  //     // const query = `SELECT * FROM 'census' WHERE time >= now() - interval '24 hours' AND ('bees' IS NOT NULL OR 'ants' IS NOT NULL) order by time asc`;
-  //     // const rows = client.query(query, "my-bucket");
-  //     // console.log(rows);
-  //     client.close();
-  //   };
-  //   createListener();
-  // }, []);
 
   return (
     <SessionChecker jumpToIfUnauthenticated="/login">
-      {isGettingReservationInfo && <Loading />}
-      {!isGettingReservationInfo && !reservation && (
+      {(isGettingReservationInfo || isGettingInfluxDBData) && <Loading />}
+      {!isGettingReservationInfo && !isGettingInfluxDBData && !reservation && (
         <p>Cannot find information about this reservation</p>
       )}
-      {!isGettingReservationInfo && reservation && (
+      {!isGettingReservationInfo && !isGettingInfluxDBData && reservation && (
         <div className="flex flex-col gap-6 max-w-2xl w-full">
           <div className="w-full flex flex-col items-center shadow-lg rounded-2xl p-5 sm:p-10 bg-white">
             <div className="w-full">
@@ -153,22 +170,16 @@ const BatteryStatusPage = ({
             </div>
           </div>
           <LineChartWithTitle
-            title="Battery Voltage"
+            title="Power Output"
             labels={labels}
-            data={batteryVoltages}
-            borderColor="rgb(75, 192, 192)"
+            data={powerOutputs}
+            borderColor="rgb(192, 75, 192)"
           />
           <LineChartWithTitle
             title="Total Consumption"
             labels={labels}
             data={totalConsumptions}
             borderColor="rgb(192, 192, 75)"
-          />
-          <LineChartWithTitle
-            title="Power Output"
-            labels={labels}
-            data={powerOutputs}
-            borderColor="rgb(192, 75, 192)"
           />
         </div>
       )}
