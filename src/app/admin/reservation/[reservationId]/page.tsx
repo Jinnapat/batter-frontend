@@ -35,6 +35,7 @@ const AdminReservationInfoPage = ({
   const router = useRouter();
   const [isGettingReservationInfo, setIsGettingReservationInfo] =
     useState<boolean>(true);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isGettingUserInfo, setIsGettingUserInfo] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [reservation, setReservation] = useState<Reservation | null>(null);
@@ -91,6 +92,25 @@ const AdminReservationInfoPage = ({
       )
       .subscribe();
   }, [params]);
+
+  const changeStatus = async (
+    status: "pending" | "delivering" | "active" | "done"
+  ) => {
+    setIsProcessing(true);
+    setErrorMessage("");
+    const updateResult = await supabaseClient
+      .from("reservations")
+      .update({ status })
+      .eq("id", params.reservationId)
+      .select();
+    if (updateResult.error) {
+      setErrorMessage(updateResult.error.message);
+      setIsProcessing(false);
+      return;
+    }
+    setReservation(updateResult.data[0]);
+    setIsProcessing(false);
+  };
 
   return (
     <SessionChecker
@@ -173,6 +193,33 @@ const AdminReservationInfoPage = ({
               <p className="text-center text-red-600">{errorMessage}</p>
             </div>
           )}
+          <div className="shadow-lg rounded-2xl sm:p-10 p-5 bg-white w-full flex flex-col gap-5">
+            <p className="text-center">Change Status of this booking</p>
+            <MainButton
+              loading={isProcessing}
+              handler={() => changeStatus("pending")}
+            >
+              Pending
+            </MainButton>
+            <MainButton
+              loading={isProcessing}
+              handler={() => changeStatus("delivering")}
+            >
+              Delivering
+            </MainButton>
+            <MainButton
+              loading={isProcessing}
+              handler={() => changeStatus("active")}
+            >
+              Active
+            </MainButton>
+            <MainButton
+              loading={isProcessing}
+              handler={() => changeStatus("done")}
+            >
+              Done
+            </MainButton>
+          </div>
         </div>
       )}
     </SessionChecker>
