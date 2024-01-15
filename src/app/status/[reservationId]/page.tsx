@@ -80,6 +80,11 @@ const BatteryStatusPage = ({
   const lastDateRef = useRef<Date>();
 
   const getInfluxDBData = async () => {
+    powerOutputsRef.current = [];
+    totalConsumptionsRef.current = [];
+    labelsRef.current = [];
+    lastDateRef.current = undefined;
+
     const url = process.env.NEXT_PUBLIC_INFLUXDB_HOST as string;
     const token = process.env.NEXT_PUBLIC_INFLUXDB_TOKEN as string;
     const org = process.env.NEXT_PUBLIC_INFLUXDB_ORG as string;
@@ -135,12 +140,9 @@ const BatteryStatusPage = ({
         setIsGettingReservationInfo(false);
       });
     setInterval(() => {
-      powerOutputsRef.current = [];
-      totalConsumptionsRef.current = [];
-      labelsRef.current = [];
-      lastDateRef.current = undefined;
       getInfluxDBData();
     }, 3000);
+    getInfluxDBData();
   }, [params]);
 
   return (
