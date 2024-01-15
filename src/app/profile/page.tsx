@@ -68,12 +68,13 @@ const InfoSlot = ({
   );
 };
 
-type UserInfo = {
+export type UserInfo = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
+  isAdmin: boolean;
 };
 
 const ProfilePage = () => {
@@ -108,6 +109,7 @@ const ProfilePage = () => {
           lastName: response.data[0].last_name,
           email: response.data[0].email,
           phone: response.data[0].phone,
+          isAdmin: response.data[0].is_admin,
         };
         setUserInfo(thisUserInfo);
       });
@@ -133,6 +135,7 @@ const ProfilePage = () => {
       lastName: updateResult.data[0].last_name,
       email: updateResult.data[0].email,
       phone: updateResult.data[0].phone,
+      isAdmin: updateResult.data[0].is_admin,
     });
     setIsProcessing(false);
     setIsEditMode(false);
