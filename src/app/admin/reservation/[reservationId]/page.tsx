@@ -14,13 +14,23 @@ import { Reservation } from "@/types/reservation";
 import MainButton from "@/components/MainButton";
 import { useRouter } from "next/navigation";
 import { UserInfo } from "@/app/profile/page";
+import Selector from "@/components/Selector";
 
-const InfoSlot = ({ title, value }: { title: string; value: string }) => {
+const InfoSlot = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string | React.ReactElement;
+}) => {
   return (
     <>
       <div className="flex flex-row items-center gap-2">
         <p className="w-5/12 text-wrap break-words font-bold">{title}</p>
-        <p className="w-[56%] text-wrap break-words">{value}</p>
+        {typeof value == "string" && (
+          <p className="w-[56%] text-wrap break-words">{value}</p>
+        )}
+        {typeof value != "string" && <>{value}</>}
       </div>
       <div className="h-0 w-full border my-3"></div>
     </>
@@ -93,9 +103,7 @@ const AdminReservationInfoPage = ({
       .subscribe();
   }, [params]);
 
-  const changeStatus = async (
-    status: "pending" | "delivering" | "active" | "done"
-  ) => {
+  const changeStatus = async (status: string) => {
     setIsProcessing(true);
     setErrorMessage("");
     const updateResult = await supabaseClient
@@ -166,7 +174,18 @@ const AdminReservationInfoPage = ({
                     title="End Date"
                     value={new Date(reservation.end).toLocaleString()}
                   />
-                  <InfoSlot title="Status" value={reservation.status} />
+                  <InfoSlot
+                    title="Status"
+                    value={
+                      <div className="w-7/12">
+                        <Selector
+                          onChange={changeStatus}
+                          value={reservation.status}
+                          isLoading={isProcessing}
+                        />
+                      </div>
+                    }
+                  />
                   <InfoSlot
                     title="Last Status Update"
                     value={new Date(reservation.updated_at).toLocaleString()}
@@ -193,33 +212,6 @@ const AdminReservationInfoPage = ({
               <p className="text-center text-red-600">{errorMessage}</p>
             </div>
           )}
-          <div className="shadow-lg rounded-2xl sm:p-10 p-5 bg-white w-full flex flex-col gap-5">
-            <p className="text-center">Change Status of this booking</p>
-            <MainButton
-              loading={isProcessing}
-              handler={() => changeStatus("pending")}
-            >
-              Pending
-            </MainButton>
-            <MainButton
-              loading={isProcessing}
-              handler={() => changeStatus("delivering")}
-            >
-              Delivering
-            </MainButton>
-            <MainButton
-              loading={isProcessing}
-              handler={() => changeStatus("active")}
-            >
-              Active
-            </MainButton>
-            <MainButton
-              loading={isProcessing}
-              handler={() => changeStatus("done")}
-            >
-              Done
-            </MainButton>
-          </div>
         </div>
       )}
     </SessionChecker>
