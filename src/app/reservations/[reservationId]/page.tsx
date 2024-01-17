@@ -13,13 +13,23 @@ import "leaflet/dist/leaflet.css";
 import { Reservation } from "@/types/reservation";
 import MainButton from "@/components/MainButton";
 import { useRouter } from "next/navigation";
+import StatusTag from "@/components/StatusTag";
 
-const InfoSlot = ({ title, value }: { title: string; value: string }) => {
+const InfoSlot = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string | React.ReactElement;
+}) => {
   return (
     <>
       <div className="flex flex-row items-center gap-2">
         <p className="w-5/12 text-wrap break-words font-bold">{title}</p>
-        <p className="w-[56%] text-wrap break-words">{value}</p>
+        {typeof value == "string" && (
+          <p className="w-[56%] text-wrap break-words">{value}</p>
+        )}
+        {typeof value != "string" && <>{value}</>}
       </div>
       <div className="h-0 w-full border my-3"></div>
     </>
@@ -105,7 +115,14 @@ const ReservationInfoPage = ({
                 title="End Date"
                 value={new Date(reservation.end).toLocaleString()}
               />
-              <InfoSlot title="Status" value={reservation.status} />
+              <InfoSlot
+                title="Status"
+                value={
+                  <div className="w-full max-w-28">
+                    <StatusTag status={reservation.status} />
+                  </div>
+                }
+              />
               <InfoSlot
                 title="Last Status Update"
                 value={new Date(reservation.updated_at).toLocaleString()}
