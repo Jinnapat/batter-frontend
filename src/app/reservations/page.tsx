@@ -2,7 +2,9 @@
 
 import HorizontalLine from "@/components/HorizontalLine";
 import Loading from "@/components/Loading";
+import ReservationList from "@/components/ReservationList";
 import SessionChecker from "@/components/SessionChecker";
+import StatusTag from "@/components/StatusTag";
 import supabaseClient from "@/supabase/client";
 import { Reservation } from "@/types/reservation";
 import { User } from "@supabase/supabase-js";
@@ -69,40 +71,10 @@ const ReservationsPage = () => {
             </p>
             <p className="text-sm text-center text-red-600">{errorMessage}</p>
             <HorizontalLine />
-            <div className="flex flex-row items-center justify-between">
-              <p className="w-8/12 text-lg text-center font-bold sm:w-2/4">
-                Name
-              </p>
-              <p className="w-1/4 text-lg text-center font-bold">Status</p>
-              <p className="w-1/4 text-lg text-center font-bold hidden sm:block">
-                Updated at
-              </p>
-            </div>
-            <div className="h-0 w-full border border-black mt-2"></div>
-            {reservations.length == 0 && (
-              <p className="text-center py-10">No reservations</p>
-            )}
-            {reservations.map((reservation) => {
-              return (
-                <div key={reservation.id}>
-                  <div className="flex flex-row items-center justify-between py-4">
-                    <div className="flex flex-row justify-center w-8/12 sm:w-2/4">
-                      <Link
-                        href={`/reservations/${reservation.id}`}
-                        className="text-center hover:text-yellow-500 duration-300 transition-colors break-words w-full"
-                      >
-                        {reservation.name}
-                      </Link>
-                    </div>
-                    <p className="w-1/4 text-center">{reservation.status}</p>
-                    <p className="w-1/4 text-center hidden sm:block">
-                      {new Date(reservation.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="h-0 w-full border"></div>
-                </div>
-              );
-            })}
+            <ReservationList
+              reservations={reservations}
+              jumpPrefix="/reservations/"
+            />
           </div>
         </div>
       )}
